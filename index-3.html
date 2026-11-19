@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Happy Princess Day</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;1,500&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--rose:#e8639a;--deep:#8a2b5c;--ink:#5a2342;--gold:#c9973f;--card:#fff8fb;--sky1:#ffd9ea;--sky2:#fff1f7}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:Quicksand,system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--sky1),var(--sky2));overflow-x:hidden;text-align:center}
+h1,h2,h3{font-family:'Playfair Display',serif;margin:.2em 0;font-weight:600}
+.script{font-family:'Great Vibes',cursive;color:var(--rose);font-size:clamp(3rem,15vw,5rem);line-height:1;margin:.1em 0}
+.hidden{display:none!important}
+button,.btn{font:inherit;font-weight:700;background:var(--rose);color:#fff;border:0;border-radius:999px;padding:12px 26px;cursor:pointer;box-shadow:0 6px 16px rgba(232,99,154,.35);text-decoration:none;display:inline-block}
+button.ghost{background:#fff;color:var(--rose);box-shadow:none;border:2px solid var(--rose)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+input,textarea{width:100%;font:inherit;padding:12px;margin:6px 0 12px;border:2px solid var(--rose);border-radius:14px;background:#fff;color:var(--ink)}
+label{display:block;text-align:left;font-weight:700;font-size:.9rem}
+.card{background:var(--card);border-radius:22px;padding:22px;box-shadow:0 10px 30px rgba(232,99,154,.22)}
+small{opacity:.75}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+
+/* ---------- creator ---------- */
+#creator{max-width:520px;margin:auto;padding:36px 18px 60px}
+#qrbox{display:inline-block;background:#fff;padding:12px;border-radius:12px;margin:12px 0}
+
+/* ---------- viewer scenes ---------- */
+#viewer{position:fixed;inset:0}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px 96px;opacity:0;pointer-events:none;transition:opacity .6s;overflow-y:auto}
+.scene.on{opacity:1;pointer-events:auto}
+.scene>*{max-width:520px;width:100%}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.stars i{position:absolute;color:#fff;text-shadow:0 0 8px var(--rose);animation:tw 3s infinite}
+@keyframes tw{50%{opacity:.25;transform:scale(.7)}}
+.scene{z-index:1}
+.castle{width:min(70vw,300px);margin:0 auto;filter:drop-shadow(0 12px 18px rgba(138,43,92,.25));animation:float 4s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-10px)}}
+.tap{letter-spacing:.18em;font-size:.78rem;font-weight:700;animation:pulse 2s infinite;margin-top:22px}
+@keyframes pulse{50%{opacity:.3}}
+.heart{font-size:3rem;color:var(--rose);animation:beat 1.2s infinite}
+@keyframes beat{50%{transform:scale(1.2)}}
+.polaroid{background:#fff;padding:12px 12px 44px;border-radius:6px;box-shadow:0 14px 30px rgba(138,43,92,.3);transform:rotate(-3deg);width:min(78vw,300px)!important;margin:18px auto;position:relative}
+.polaroid img{width:100%;aspect-ratio:1;object-fit:cover;object-position:center 38%;display:block;background:#ffd9ea}
+.polaroid span{position:absolute;bottom:10px;left:0;right:0;font-family:'Great Vibes',cursive;font-size:1.6rem;color:var(--rose)}
+/* song */
+.vinyl{width:min(62vw,230px);aspect-ratio:1;border-radius:50%;margin:16px auto;background:radial-gradient(circle,var(--rose) 0 22%,#2a1020 23% 100%);box-shadow:0 12px 28px rgba(0,0,0,.3);position:relative}
+.vinyl:after{content:"";position:absolute;inset:47%;background:#fff;border-radius:50%}
+.vinyl.spin{animation:spin 5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.player{display:flex;align-items:center;gap:12px;background:#fff;border-radius:999px;padding:8px 14px 8px 8px;box-shadow:0 6px 18px rgba(232,99,154,.25)}
+.player button{width:46px;height:46px;padding:0;font-size:1.1rem;flex:none}
+.bar{flex:1;height:6px;border-radius:6px;background:#ffd9ea;overflow:hidden}
+.bar b{display:block;height:100%;width:0;background:var(--rose)}
+.time{font-size:.75rem;font-weight:700;min-width:70px}
+/* wall */
+.wall{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+.flip{perspective:900px;aspect-ratio:3/4;border:0;background:none;padding:0;cursor:pointer;box-shadow:none;border-radius:0}
+.flip:nth-child(3){grid-column:1/3;width:50%;margin:auto}
+.flip .in{position:relative;width:100%;height:100%;transition:transform .7s;transform-style:preserve-3d}
+.flip.on .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:10px;overflow:hidden;background:#fff;border:7px solid #fff;box-shadow:0 8px 20px rgba(138,43,92,.25);display:flex;align-items:center;justify-content:center;font-size:2.4rem}
+.face img{width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.back{transform:rotateY(180deg);padding:12px;background:var(--card);font:italic 600 1rem 'Playfair Display',serif;color:var(--ink)}
+/* certificate */
+.cert{position:relative;border:5px double var(--gold);background:var(--card);border-radius:10px;padding:24px 16px 20px}
+.cert .tt{font-size:.7rem;letter-spacing:.25em;color:var(--gold);font-weight:700}
+.nm{font:400 clamp(2.4rem,12vw,3.4rem) 'Great Vibes',cursive;color:var(--rose);margin:4px 0}
+.cert ul{text-align:left;padding-left:18px;line-height:1.55;font-size:.88rem;margin:10px 0}
+.seal{position:absolute;right:10px;top:-26px;width:62px;height:62px;border-radius:50%;background:radial-gradient(circle,#e7c36d,var(--gold));color:#fff;font-size:.5rem;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.25);border:3px dashed #fff8;transform:rotate(12deg)}
+/* nav */
+#nav{position:fixed;left:0;right:0;bottom:0;padding:12px 16px 18px;display:flex;align-items:center;justify-content:center;gap:14px;z-index:5;background:linear-gradient(transparent,#ffe3f0cc 40%)}
+#dots{display:flex;gap:6px}
+#dots i{width:8px;height:8px;border-radius:50%;background:#e8639a55}
+#dots i.on{background:var(--rose);transform:scale(1.4)}
+.petal{position:fixed;top:-30px;pointer-events:none;animation:fall linear forwards;z-index:6}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ================= CREATOR ================= -->
+<main id="creator" class="hidden">
+  <div class="script">Princess Day</div>
+  <h2>Make a royal surprise for your princess</h2>
+  <div class="card" style="margin-top:16px">
+    <label>Your name<input id="from" placeholder="Your name"></label>
+    <label>Her name<input id="to" placeholder="Her name"></label>
+    <label>Your message (optional)<textarea id="msg" rows="4" placeholder="Write something sweet"></textarea></label>
+    <label>Back of photo 1<input id="c1" placeholder="e.g. the day I met you"></label>
+    <label>Back of photo 2<input id="c2" placeholder="e.g. my favorite smile"></label>
+    <label>Back of photo 3<input id="c3" placeholder="e.g. forever mine"></label>
+    <small>Your pictures must be in the repo as <b>1.jpg, 2.jpg, 3.jpg</b> and your song as <b>song.mp3</b>.</small>
+  </div>
+  <div class="row"><button id="gen">Generate QR &amp; link</button></div>
+  <div id="result" class="card hidden" style="margin-top:20px">
+    <h3>It's ready</h3>
+    <div id="qrbox"></div>
+    <div class="row">
+      <button id="copy">Copy link</button>
+      <button id="saveqr">Save QR</button>
+      <a class="btn ghost" id="open" target="_blank" rel="noopener" style="box-shadow:none;border:2px solid var(--rose);color:var(--rose);background:#fff">Preview</a>
+    </div>
+  </div>
+</main>
+
+<main id="qrpage" class="hidden" style="max-width:420px;margin:auto;padding:50px 18px">
+  <div class="script">For Priya</div>
+  <div class="card"><div id="qrbig" style="display:inline-block;background:#fff;padding:12px;border-radius:12px"></div>
+  <p>Scan to open the surprise</p>
+  <div class="row"><button id="qrsave">Save QR</button><button class="ghost" id="qrcopy">Copy link</button></div></div>
+</main>
+
+<!-- ================= VIEWER ================= -->
+<main id="viewer" class="hidden">
+  <div class="stars" id="stars"></div>
+
+  <!-- 0 cover -->
+  <section class="scene on" data-tap="1">
+    <svg class="castle" viewBox="0 0 220 180" aria-label="Pink fairytale castle">
+      <g stroke="#e8639a" stroke-width="2.5" stroke-linejoin="round">
+        <rect x="14" y="82" width="34" height="80" fill="#ffc1d9"/><polygon points="8,82 31,40 54,82" fill="#e8639a"/>
+        <rect x="172" y="82" width="34" height="80" fill="#ffc1d9"/><polygon points="166,82 189,40 212,82" fill="#e8639a"/>
+        <rect x="48" y="112" width="124" height="50" fill="#ffd0e3"/>
+        <rect x="78" y="60" width="64" height="102" fill="#ffc1d9"/><polygon points="68,60 110,8 152,60" fill="#e8639a"/>
+        <path d="M94 162v-34a16 16 0 0 1 32 0v34z" fill="#fff"/>
+        <circle cx="110" cy="84" r="9" fill="#fff"/>
+        <rect x="26" y="108" width="10" height="16" rx="5" fill="#fff"/><rect x="184" y="108" width="10" height="16" rx="5" fill="#fff"/>
+        <line x1="110" y1="8" x2="110" y2="-6"/><path d="M110 -6l18 6-18 6z" fill="#c9973f" stroke="#c9973f"/>
+      </g>
+    </svg>
+    <small>✿ a royal surprise awaits ✿</small>
+    <h1 class="script">Happy Princess Day</h1>
+    <div class="tap">TAP ANYWHERE TO ENTER</div>
+  </section>
+
+  <!-- 1 hello -->
+  <section class="scene" data-tap="1">
+    <div class="heart">♥</div>
+    <h2 style="font-size:2.4rem">Hey <span class="to"></span>!</h2>
+    <p style="font-size:1.2rem">I made a little something<br>just for you...</p>
+    <small>happy princess day ✿</small>
+    <div class="tap">TAP ANYWHERE TO BEGIN</div>
+  </section>
+
+  <!-- 2 photo -->
+  <section class="scene">
+    <small>PRINCESS DAY</small>
+    <h1 class="script">Happy Princess Day</h1>
+    <div class="polaroid"><img src="1.jpg" alt="Us" onerror="this.style.visibility='hidden'"><span>us ♥</span></div>
+    <div class="card" style="margin-top:6px"><p id="msgOut" style="margin:0;white-space:pre-line"></p></div>
+  </section>
+
+  <!-- 3 song -->
+  <section class="scene">
+    <small>NOW PLAYING</small>
+    <h2 style="font-size:2rem">Our Song</h2>
+    <small>the one that's ours</small>
+    <div class="vinyl" id="vinyl"></div>
+    <div class="player">
+      <button id="play" aria-label="Play or pause">▶</button>
+      <div class="bar"><b id="prog"></b></div>
+      <span class="time" id="time">0:00 / 0:00</span>
+    </div>
+    <p id="songNote" style="margin-top:14px">press play — this one is permanently attached to memories of you ✿</p>
+    <audio id="song" src="song.mp3" preload="auto"></audio>
+  </section>
+
+  <!-- 4 wall -->
+  <section class="scene">
+    <small>THE MEMORY WALL</small>
+    <h2 style="font-size:2rem">flip one over</h2>
+    <small>every photo has something written on the back ✿</small>
+    <div class="wall" id="wall"></div>
+  </section>
+
+  <!-- 5 certificate -->
+  <section class="scene">
+    <small>A ROYAL DECREE</small>
+    <h2>the princess certificate</h2>
+    <div class="cert" style="margin-top:22px">
+      <div class="seal">ROYAL<br>SEAL</div>
+      <div class="tt">ROYAL CERTIFICATE</div>
+      <h3>Officially a Princess</h3>
+      <small>This royal title is hereby presented to</small>
+      <div class="nm to"></div>
+      <small>is entitled to the following royal privileges, forever:</small>
+      <ul>
+        <li><b>Be heard.</b> Every wish and opinion counts, Your Highness.</li>
+        <li><b>Be celebrated.</b> Princess Day is today, but the party never really ends.</li>
+        <li><b>Be treated like royalty.</b> Extra hugs, and the good fries. No exceptions.</li>
+        <li><b>Shine always.</b> Crown optional, sparkle mandatory.</li>
+        <li><b>Terms:</b> valid forever, non-refundable, non-transferable.</li>
+      </ul>
+      <small>issued by</small><div class="nm" style="font-size:2rem"><span class="from"></span></div>
+      <small>royal witness</small>
+    </div>
+    <div class="row"><button id="dl">Download certificate ⬇</button></div>
+  </section>
+
+  <!-- 6 note -->
+  <section class="scene">
+    <small>✿ one last thing ✿</small>
+    <h2 style="font-size:2rem">A Note For You</h2>
+    <div class="card" style="margin:16px 0"><p style="font-size:1.1rem;margin:0">Happy Princess Day, <b class="to"></b> ♥</p><p style="margin:10px 0 0">— <span class="from"></span></p></div>
+    <div class="heart">♥</div>
+    <div class="row"><button class="ghost" id="again">Watch again</button></div>
+  </section>
+
+  <div id="nav">
+    <button class="ghost" id="back" aria-label="Back">←</button>
+    <div id="dots"></div>
+    <button id="next">Next →</button>
+  </div>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const enc = o => btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec = s => JSON.parse(decodeURIComponent(escape(atob(s))));
+const hash = location.hash.slice(1);
+const DEFAULT = {
+  t: 'Priya', f: 'Yash',
+  m: 'hehe mein late hogya wishh karne me. Happy princess day my little princess 👸🏻\nI lub boo 🎀',
+  c: ['I still crave you', 'I still love you', "you're still mine"]
+};
+if (hash === 'qr') startQR(); else if (hash === 'create') startCreator(); else startViewer();
+
+function startCreator(){
+  $('#creator').classList.remove('hidden');
+  let link = '';
+  $('#gen').onclick = () => {
+    const d = {f:$('#from').value.trim(), t:$('#to').value.trim(), m:$('#msg').value.trim(), c:[$('#c1').value,$('#c2').value,$('#c3').value]};
+    if (!d.t) { alert('Add her name first.'); return; }
+    link = location.href.split('#')[0] + '#' + enc(d);
+    $('#qrbox').innerHTML = '';
+    new QRCode($('#qrbox'), {text: link, width: 200, height: 200});
+    $('#open').href = link;
+    $('#result').classList.remove('hidden');
+  };
+  $('#copy').onclick = async () => { await navigator.clipboard.writeText(link); $('#copy').textContent = 'Copied'; };
+  $('#saveqr').onclick = () => {
+    const c = $('#qrbox canvas'), i = $('#qrbox img'), a = document.createElement('a');
+    a.href = c ? c.toDataURL('image/png') : i.src; a.download = 'princess-day-qr.png'; a.click();
+  };
+}
+
+function startQR(){
+  $('#qrpage').classList.remove('hidden');
+  const link = location.href.split('#')[0];
+  new QRCode($('#qrbig'), {text: link, width: 240, height: 240});
+  $('#qrsave').onclick = () => { const c=$('#qrbig canvas'), i=$('#qrbig img'), a=document.createElement('a'); a.href=c?c.toDataURL('image/png'):i.src; a.download='priya-princess-day-qr.png'; a.click(); };
+  $('#qrcopy').onclick = async () => { await navigator.clipboard.writeText(link); $('#qrcopy').textContent='Copied'; };
+}
+
+function startViewer(){
+  let d = DEFAULT; if (hash) { try { d = dec(hash); } catch {} }
+  $('#viewer').classList.remove('hidden');
+  document.title = 'Happy Princess Day, ' + d.t;
+  document.querySelectorAll('.to').forEach(e => e.textContent = d.t);
+  document.querySelectorAll('.from').forEach(e => e.textContent = d.f || 'the cat');
+  $('#msgOut').textContent = d.m || 'You deserve all the good things today.';
+
+  // sparkles
+  for (let i=0;i<22;i++){ const s=document.createElement('i'); s.textContent='✦';
+    s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;font-size:${8+Math.random()*14}px;animation-delay:${Math.random()*3}s`; $('#stars').appendChild(s); }
+
+  // memory wall
+  [1,2,3].forEach((n,i) => {
+    const b = document.createElement('button'); b.className='flip'; b.setAttribute('aria-label','Flip photo '+n);
+    b.innerHTML = `<div class="in"><div class="face"><img src="${n}.jpg" alt="Photo ${n}" onerror="this.replaceWith('👑')"></div><div class="face back"></div></div>`;
+    b.querySelector('.back').textContent = (d.c && d.c[i]) || 'Still my favorite.';
+    b.onclick = () => b.classList.toggle('on');
+    $('#wall').appendChild(b);
+  });
+
+  // scenes
+  const scenes = [...document.querySelectorAll('.scene')];
+  let cur = 0;
+  scenes.forEach((_,i) => $('#dots').appendChild(document.createElement('i')));
+  const dots = [...document.querySelectorAll('#dots i')];
+  function go(n){
+    cur = Math.max(0, Math.min(scenes.length-1, n));
+    scenes.forEach((s,i) => s.classList.toggle('on', i===cur));
+    dots.forEach((x,i) => x.classList.toggle('on', i===cur));
+    $('#back').style.visibility = cur===0 ? 'hidden' : 'visible';
+    $('#next').style.visibility = cur===scenes.length-1 ? 'hidden' : 'visible';
+    $('#nav').classList.toggle('hidden', cur===0);
+    if (cur===2) petals();
+  }
+  go(0);
+  scenes.forEach(s => s.addEventListener('click', e => {
+    if (s.dataset.tap && !e.target.closest('button')) { if (cur===0) startSong(); go(cur+1); }
+  }));
+  $('#next').onclick = () => go(cur+1);
+  $('#back').onclick = () => go(cur-1);
+  $('#again').onclick = () => go(0);
+
+  // song
+  const au = $('#song'), pb = $('#play');
+  const fmt = t => isFinite(t) ? Math.floor(t/60)+':'+String(Math.floor(t%60)).padStart(2,'0') : '0:00';
+  function startSong(){ au.play().catch(()=>{}); }
+  pb.onclick = () => au.paused ? au.play().catch(()=>{ $('#songNote').textContent='No song found. Upload song.mp3 to your GitHub repo.'; }) : au.pause();
+  au.onplay = () => { pb.textContent='❚❚'; $('#vinyl').classList.add('spin'); };
+  au.onpause = () => { pb.textContent='▶'; $('#vinyl').classList.remove('spin'); };
+  au.ontimeupdate = () => { $('#prog').style.width = (au.currentTime/au.duration*100||0)+'%'; $('#time').textContent = fmt(au.currentTime)+' / '+fmt(au.duration); };
+  au.onloadedmetadata = au.ontimeupdate;
+  au.onerror = () => { $('#songNote').textContent = 'No song found. Upload a file named song.mp3 to your GitHub repo.'; };
+
+  // certificate image
+  $('#dl').onclick = () => {
+    const c = document.createElement('canvas'); c.width = 1000; c.height = 720; const x = c.getContext('2d');
+    x.fillStyle='#fff8fb'; x.fillRect(0,0,1000,720);
+    x.strokeStyle='#c9973f'; x.lineWidth=8; x.strokeRect(24,24,952,672); x.lineWidth=2; x.strokeRect(42,42,916,636);
+    x.textAlign='center'; x.fillStyle='#c9973f'; x.font='700 20px Quicksand, sans-serif'; x.fillText('R O Y A L   C E R T I F I C A T E',500,100);
+    x.fillStyle='#5a2342'; x.font='600 52px "Playfair Display", serif'; x.fillText('Officially a Princess',500,170);
+    x.font='24px Quicksand, sans-serif'; x.fillText('This royal title is hereby presented to',500,225);
+    x.fillStyle='#e8639a'; x.font='88px "Great Vibes", cursive'; x.fillText(d.t,500,320);
+    x.fillStyle='#5a2342'; x.font='22px Quicksand, sans-serif';
+    ['Be heard. Be celebrated. Be treated like royalty.','Shine always. Crown optional, sparkle mandatory.','Valid forever, non-refundable, non-transferable.'].forEach((l,i)=>x.fillText(l,500,395+i*38));
+    x.font='20px Quicksand, sans-serif'; x.fillText('issued by',500,565);
+    x.fillStyle='#e8639a'; x.font='54px "Great Vibes", cursive'; x.fillText(d.f||'the cat',500,625);
+    x.fillStyle='#c9973f'; x.beginPath(); x.arc(860,590,50,0,7); x.fill();
+    x.fillStyle='#fff'; x.font='700 14px Quicksand, sans-serif'; x.fillText('ROYAL',860,586); x.fillText('SEAL',860,604);
+    const a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='princess-certificate.png'; a.click();
+  };
+}
+
+function petals(){
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  for (let i=0;i<22;i++){ const p=document.createElement('div'); p.className='petal'; p.textContent=['🌸','✿','💗'][i%3];
+    p.style.left=Math.random()*100+'vw'; p.style.fontSize=14+Math.random()*16+'px';
+    p.style.animationDuration=5+Math.random()*5+'s'; p.style.animationDelay=Math.random()*3+'s';
+    document.body.appendChild(p); setTimeout(()=>p.remove(),12000); }
+}
+</script>
+</body>
+</html>
