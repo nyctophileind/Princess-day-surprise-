@@ -166,7 +166,7 @@ function startViewer(){
   [1,2,3].forEach((n,i) => {
     const b = document.createElement('button');
     b.className = 'flip'; b.setAttribute('aria-label','Flip photo '+n);
-    b.innerHTML = `<div class="in"><div class="face"><img src="photos/${n}.jpg" alt="Photo ${n}" onerror="this.replaceWith('👑')"></div><div class="face back"></div></div>`;
+    b.innerHTML = `<div class="in"><div class="face"><img src="${n}.jpg" alt="Photo ${n}" onerror="this.replaceWith('👑')"></div><div class="face back"></div></div>`;
     b.querySelector('.back').textContent = (d.c && d.c[i]) || 'Still my favorite.';
     b.onclick = () => b.classList.toggle('on');
     wall.appendChild(b);
